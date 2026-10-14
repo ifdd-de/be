@@ -1,0 +1,7 @@
+default_context:
+  ifdd_be_prj_name: Minimal Backend
+  ifdd_be_aspects: '{"products": "product"}'
+  ifdd_be_role_nodes_read: custom_reader
+  ifdd_be_enable_versioning: "n"
+  ifdd_be_postgres_image: "postgres:18.4"
+  ifdd_context_root: "example.ifdd.de"

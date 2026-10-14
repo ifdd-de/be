@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{cookiecutter.ifdd_be_prj_slug}}"
+version = "{{cookiecutter.ifdd_be_version}}"
+description = "{{cookiecutter.ifdd_be_prj_name}}"
+requires-python = ">=3.13"
+
+dependencies = [
+    "ifdd-be-core~={{cookiecutter.ifdd_be_core_version}}",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ifdd-be-core[dev]~={{cookiecutter.ifdd_be_core_version}}",
+    "ipython",
+    "watchfiles",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.cruft]
+skip = [
+    ".env",
+    "envs",
+    "certs",
+    "app/routers",
+    "app/settings.py",
+    "tests",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

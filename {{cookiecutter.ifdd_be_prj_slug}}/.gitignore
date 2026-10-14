@@ -1,0 +1,7 @@
+# CA certificates of this instance (see certs/README.md). Only the README is
+# versioned.
+certs/*
+!certs/README.md
+
+# Local builds of the documentation (docs/en, docs/de)
+docs/_build/

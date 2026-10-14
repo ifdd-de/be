@@ -1,0 +1,43 @@
+# Development image: like the production image, plus build tools (for building
+# a wheel from local source) and the dev extras. Started with auto-reload via
+# start-reload.sh (see docker-compose-development.yml).
+FROM python:3.14-slim
+
+ENV PIP_ROOT_USER_ACTION=ignore \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONUNBUFFERED=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY wheels /tmp/wheels
+COPY pyproject.toml /app/pyproject.toml
+COPY ./app /app/app
+COPY prestart.sh /app/prestart.sh
+COPY start-reload.sh /app/start-reload.sh
+
+WORKDIR /app
+RUN pip install --no-cache-dir --find-links /tmp/wheels -e ".[dev]"
+
+# Dockerfile.dev does not take over the certs (development runs without the
+# proxy; see the production Dockerfile and README).
+
+# Run as the unprivileged user "be" (uid/gid 10001), not as root. The code
+# stays owned by root and is only readable for it. The backend writes no files
+# at run time (the JSON-LD, token and namespace caches are in memory), so it
+# needs no writable directory. Read and execute rights are set here, so that
+# restrictive rights in the build context (e.g. umask 077) do not matter.
+# The mounted ./app (docker-compose-development.yml) must be readable for
+# others on the host; uvicorn only reads it.
+RUN groupadd --system --gid 10001 be \
+    && useradd --system --uid 10001 --gid be --no-create-home \
+       --home-dir /nonexistent --shell /usr/sbin/nologin be \
+    && chmod -R a+rX /app \
+    && chmod a+rx /app/start-reload.sh /app/prestart.sh
+USER be
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD python -c "import os,sys,urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('PORT', '{{cookiecutter.ifdd_be_port}}') + '/version', timeout=5).status == 200 else 1)"
+
+CMD ["/app/start-reload.sh"]

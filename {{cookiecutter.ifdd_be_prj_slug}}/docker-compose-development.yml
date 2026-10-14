@@ -1,0 +1,60 @@
+volumes:
+  ifdd_be_postgres_data: { }
+  ifdd_be_postgres_data_backups: { }
+
+services:
+  backend:
+    env_file:
+      - .env
+    environment:
+      - PORT=${IFDD_BE_PORT}
+      - IFDD_BE_AUTH_ENABLED=false
+      - IFDD_BE_SSL_ENABLED=false
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    command: /app/start-reload.sh
+    volumes:
+      - ./app:/app/app
+    networks:
+      - ext-proxy-net
+      - db-net
+    expose:
+      - ${IFDD_BE_PORT}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.data.rule=Host(`{{cookiecutter.ifdd_be_host}}`)"
+      - "traefik.http.services.data.loadbalancer.server.port={{cookiecutter.ifdd_be_port}}"
+      - "traefik.docker.network=proxy-net"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
+  db:
+    image: "{{ cookiecutter.ifdd_be_postgres_image }}"
+    env_file:
+      - .env
+    hostname: ${POSTGRES_HOST}
+    volumes:
+      # From PostgreSQL 18 on, the image keeps its data in a versioned
+      # subdirectory of /var/lib/postgresql.
+      - ifdd_be_postgres_data:/var/lib/postgresql
+      - ifdd_be_postgres_data_backups:/backups
+    networks:
+      - db-net
+    restart: always
+    healthcheck:
+      # -d: without it pg_isready connects to a database named like the user,
+      # and PostgreSQL logs a failed attempt at every check.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  ext-proxy-net:
+    name: proxy-net
+    external: true
+  db-net:
+    external: false

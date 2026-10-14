@@ -1,0 +1,52 @@
+MODULE_NAME="app.main"
+# Number of uvicorn worker processes (see start.sh).
+MAX_WORKERS={{cookiecutter.ifdd_be_max_workers}}
+FORWARDED_ALLOW_IPS="*"
+LOG_LEVEL={{cookiecutter.ifdd_be_log_level.upper()}}
+ACCESS_LOG=""
+FASTAPI_SECRET_KEY=!!!SECRET length=32 chars=lower,upper,digit min_each=2!!!
+
+API_TITLE='{{cookiecutter.ifdd_be_prj_name}}'
+LOG_FILE_PATH=logs/{{cookiecutter.ifdd_be_prj_slug}}.log
+
+IFDD_BE_VERSION={{cookiecutter.ifdd_be_version}}
+IFDD_BE_URL={{cookiecutter.ifdd_be_url}}
+IFDD_BE_HOST={{cookiecutter.ifdd_be_host}}
+IFDD_BE_PORT={{cookiecutter.ifdd_be_port}}
+IFDD_BE_AUTH_ENABLED={{cookiecutter.ifdd_be_enable_auth}}
+# y: keep replaced versions as history in system time; n: delete them
+IFDD_VERSIONING={{cookiecutter.ifdd_be_enable_versioning}}
+IFDD_BE_SSL_ENABLED={{cookiecutter.ifdd_be_enable_tls}}
+IFDD_TYPE_URL={{cookiecutter.ifdd_type_url}}
+IFDD_SCHEMA_URL={{cookiecutter.ifdd_schema_url}}
+
+# REST path segment -> aspect. Single quotes keep the JSON intact when a
+# shell sources this file; docker compose and the backend read the same value.
+IFDD_ASPECTS='{{cookiecutter.ifdd_be_aspects}}'
+IFDD_ROLE_NODES_READ={{cookiecutter.ifdd_be_role_nodes_read}}
+IFDD_ROLE_NODES_WRITE={{cookiecutter.ifdd_be_role_nodes_write}}
+IFDD_ROLE_PUBLIC={{cookiecutter.ifdd_be_role_public}}
+# Context pattern of the development user (IFDD_BE_AUTH_ENABLED=n): it may use
+# every domain context below this name. With auth on, patterns come from the
+# client roles with a dot in the access token.
+IFDD_CONTEXT_ROOT={{cookiecutter.ifdd_context_root}}
+# Browser origins allowed to call this API (CORS): the UI only. Requests from
+# any other origin are refused by the browser before they reach the API. For
+# local UI development add its origin, e.g. "http://localhost:3000".
+IFDD_CORS_ORIGINS=["{{cookiecutter.ifdd_ui_url}}"]
+
+POSTGRES_HOST={{cookiecutter.ifdd_be_postgres_host}}
+POSTGRES_PORT={{cookiecutter.ifdd_be_postgres_port}}
+POSTGRES_DB={{cookiecutter.ifdd_be_postgres_db}}
+POSTGRES_USER={{cookiecutter.ifdd_be_postgres_user}}
+POSTGRES_PASSWORD=!!!SECRET length=32 chars=lower,upper,digit min_each=2!!!
+IFDD_SERVICE_DB_URL="postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
+
+IFDD_OIDC_TOKEN_URL={{cookiecutter.ifdd_oidc_token_url}}
+IFDD_OIDC_AUTHORIZATION_URL={{cookiecutter.ifdd_oidc_authorization_url}}
+IFDD_OIDC_REFRESH_URL={{cookiecutter.ifdd_oidc_refresh_url}}
+IFDD_OIDC_JWKS_URL={{cookiecutter.ifdd_oidc_jwks_url}}
+IFDD_OIDC_JWKS_AUDIENCE={{cookiecutter.ifdd_oidc_jwks_audience}}
+# Issuer ("iss") the access tokens must carry: the realm URL
+IFDD_OIDC_ISSUER={{cookiecutter.ifdd_oidc_realm}}
+IFDD_OIDC_JWKS_ALGORITHM={{cookiecutter.ifdd_oidc_jwks_algorithm}}

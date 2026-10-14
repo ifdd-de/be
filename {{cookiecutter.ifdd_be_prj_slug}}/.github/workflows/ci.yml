@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Test
+        run: pytest -q
+
+  template:
+    name: Template drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install cruft
+        run: pip install cruft
+
+      - name: Is this instance behind its template?
+        # Informational: being behind is a decision, not a failure.
+        continue-on-error: true
+        run: cruft check
+
+      - name: How far has this instance drifted from its template?
+        # Also informational. Everything shown here is a backport candidate:
+        # either it belongs upstream in the template, or the file belongs on
+        # the skip list in .cruft.json.
+        continue-on-error: true
+        run: cruft diff

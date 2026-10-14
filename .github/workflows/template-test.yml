@@ -1,0 +1,96 @@
+name: Template
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    name: Render and test (${{ matrix.fixture }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        fixture: [defaults, auth-tls, single-aspect]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: template
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Install tooling
+        run: pip install cruft cookiecutter pyyaml
+
+      # be-core is not on PyPI in CI, so it is installed from its repository.
+      # Pin this to a release once the package is published.
+      - name: Check out be-core
+        uses: actions/checkout@v7
+        with:
+          repository: ifdd-de/be-core
+          path: be-core
+
+      - name: Render
+        run: |
+          cookiecutter --no-input --config-file template/tests/fixtures/${{ matrix.fixture }}.yaml \
+            --output-dir rendered template
+
+      - name: Install the rendered instance
+        run: |
+          INSTANCE=$(find rendered -mindepth 1 -maxdepth 1 -type d | head -1)
+          echo "INSTANCE=$INSTANCE" >> "$GITHUB_ENV"
+          pip install -e "./be-core[dev]"
+          pip install -e "$INSTANCE" --no-deps
+
+      - name: A shell can source .env, the aspects stay valid JSON
+        working-directory: ${{ env.INSTANCE }}
+        run: |
+          set -a; . ./.env; set +a
+          python -c 'import json, os; json.loads(os.environ["IFDD_ASPECTS"])'
+
+      - name: The hook rejects a single quote in ifdd_be_aspects
+        run: |
+          if cookiecutter --no-input --output-dir rejected template \
+              "ifdd_be_aspects={\"products\": \"it's\"}"; then
+            echo "the hook should have rejected the single quote"; exit 1
+          fi
+
+      - name: CORS allows exactly the configured UI origin
+        run: python template/tests/check_cors.py template/tests/fixtures/${{ matrix.fixture }}.yaml "$INSTANCE"
+
+      - name: Context root of the development user
+        run: python template/tests/check_context_root.py template/tests/fixtures/${{ matrix.fixture }}.yaml "$INSTANCE"
+
+      - name: Database service (healthcheck, volume, PostgreSQL 18, versioning)
+        run: python template/tests/check_db_service.py "$INSTANCE"
+
+      - name: Image setup (base image, uvicorn start, no gunicorn)
+        run: python template/tests/check_image.py "$INSTANCE"
+
+      - name: Test the rendered instance
+        working-directory: ${{ env.INSTANCE }}
+        run: pytest -q
+
+      - name: Documentation (docs/en, docs/de) matches and builds
+        run: |
+          pip install -r template/tests/docs/requirements.txt
+          python template/tests/check_docs.py "$INSTANCE" --prefix ifdd-be- --external ifdd-be-core-
+
+      - name: The rendered instance must contain no template placeholders
+        run: |
+          if grep -rl "cookiecutter\." "$INSTANCE"; then
+            echo "Unrendered placeholders found" >&2
+            exit 1
+          fi
