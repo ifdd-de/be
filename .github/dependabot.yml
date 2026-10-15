@@ -18,7 +18,8 @@ updates:
       actions:
         patterns: ["*"]
   - package-ecosystem: "docker"
-    directory: "/{{cookiecutter.ifdd_be_prj_slug}}"
+    directories:
+      - "/*cookiecutter.ifdd_be_prj_slug*"
     schedule:
       interval: "monthly"
     groups:
