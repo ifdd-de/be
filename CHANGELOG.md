@@ -4,6 +4,11 @@ The version scheme follows the other IFDD repositories: `YY.MM.N`.
 
 ## [26.10.2] - 2026-10-14
 
+- The template file of the instance `pyproject.toml` is named
+  `{{ 'pyproject.toml' }}`; cookiecutter renders the name, so instances still
+  get `pyproject.toml`. Under its plain name GitHub's Dependabot graph job
+  parsed the unrendered file and failed on the template expression in the
+  `ifdd-be-core` requirement. `cruft update` sees no change in instances.
 - The backend runs as the unprivileged user `be` (uid/gid 10001) instead of
   root, in `Dockerfile` and `Dockerfile.dev`. The code stays owned by root
   and readable for all; the backend writes no files at run time. The
