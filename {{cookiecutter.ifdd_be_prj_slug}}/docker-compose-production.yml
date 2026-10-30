@@ -20,20 +20,20 @@ services:
       - ${IFDD_BE_PORT}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.data.rule=Host(`{{cookiecutter.ifdd_be_host}}`)"
-      - "traefik.http.services.data.loadbalancer.server.port={{cookiecutter.ifdd_be_port}}"
+      - "traefik.http.routers.{{ cookiecutter.ifdd_be_prj_slug }}.rule=Host(`{{cookiecutter.ifdd_be_host}}`)"
+      - "traefik.http.services.{{ cookiecutter.ifdd_be_prj_slug }}.loadbalancer.server.port={{cookiecutter.ifdd_be_port}}"
       # Security headers from the proxy (ifdd-de/proxy, headers.yml). The
       # backend also serves Swagger UI and ReDoc (/docs, /redoc), so it uses
       # csp-api-docs: scripts and styles from this host only, plus the realm
       # in connect-src for "Authorize" (see README, "API documentation").
-      - "traefik.http.routers.data.middlewares=security-headers@file,csp-api-docs@file"
-      - "traefik.docker.network=proxy-net"
+      - "traefik.http.routers.{{ cookiecutter.ifdd_be_prj_slug }}.middlewares=security-headers@file,csp-api-docs@file"
+      - "traefik.docker.network={{ cookiecutter.ifdd_proxy_network }}"
       {%- if cookiecutter.ifdd_be_enable_tls == "y" %}
-      - "traefik.http.routers.data.entrypoints=websecure"
-      - "traefik.http.routers.data.tls=true"
+      - "traefik.http.routers.{{ cookiecutter.ifdd_be_prj_slug }}.entrypoints=websecure"
+      - "traefik.http.routers.{{ cookiecutter.ifdd_be_prj_slug }}.tls=true"
       {%- endif +%}
       {%- if cookiecutter.ifdd_be_enable_letsencrypt == "y" %}
-      - "traefik.http.routers.data.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.{{ cookiecutter.ifdd_be_prj_slug }}.tls.certresolver=letsencrypt"
       {%- endif +%}
     # prestart.sh creates missing tables before the server starts, so the
     # database must accept connections first.
@@ -65,7 +65,7 @@ services:
       
 networks:
   ext-proxy-net:
-    name: proxy-net
+    name: {{ cookiecutter.ifdd_proxy_network }}
     external: true
   db-net:
     external: false

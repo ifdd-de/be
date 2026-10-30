@@ -1,5 +1,6 @@
 default_context:
   ifdd_be_prj_name: Secured Backend
+  ifdd_proxy_network: "edge-net"
   ifdd_be_enable_auth: "y"
   ifdd_be_enable_tls: "y"
   ifdd_be_enable_letsencrypt: "y"
