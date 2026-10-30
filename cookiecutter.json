@@ -35,6 +35,7 @@
   "ifdd_oidc_jwks_algorithm": "RS256",
   "ifdd_oidc_realm": "https://id/realms/testrealm",
   "ifdd_registry_url": "ghcr.io/ifdd-de",
+  "ifdd_proxy_network": "proxy-net",
   "_copy_without_render": [
     ".github"
   ]

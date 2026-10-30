@@ -67,6 +67,12 @@ jobs:
             echo "the hook should have rejected the single quote"; exit 1
           fi
 
+      - name: The hook rejects an invalid proxy network name
+        run: |
+          if cookiecutter --no-input --output-dir rejected template "ifdd_proxy_network=bad net"; then
+            echo "the hook should have rejected the network name"; exit 1
+          fi
+
       - name: CORS allows exactly the configured UI origin
         run: python template/tests/check_cors.py template/tests/fixtures/${{ matrix.fixture }}.yaml "$INSTANCE"
 
@@ -75,6 +81,9 @@ jobs:
 
       - name: Database service (healthcheck, volume, PostgreSQL 18, versioning)
         run: python template/tests/check_db_service.py "$INSTANCE"
+
+      - name: Traefik names follow the slug, the proxy network is the configured one
+        run: python template/tests/check_traefik.py template/tests/fixtures/${{ matrix.fixture }}.yaml "$INSTANCE"
 
       - name: Image setup (base image, uvicorn start, no gunicorn)
         run: python template/tests/check_image.py "$INSTANCE"

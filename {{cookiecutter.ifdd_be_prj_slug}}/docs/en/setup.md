@@ -6,7 +6,7 @@
 | What | Why |
 |---|---|
 | Docker with Compose | the backend and its database run as two containers |
-| the external network `proxy-net` and a running proxy instance | Traefik routes `{{ cookiecutter.ifdd_be_host }}` to the backend; the backend reaches Keycloak and the schema service through it |
+| the external network `{{ cookiecutter.ifdd_proxy_network }}` and a running proxy instance | Traefik routes `{{ cookiecutter.ifdd_be_host }}` to the backend; the backend reaches Keycloak and the schema service through it |
 | the proxy lists `{{ cookiecutter.ifdd_be_host }}`, the Keycloak host and the schema host in `ifdd_proxy_internal_hosts` | inside the containers these names must lead to Traefik, not to the container itself |
 | a Keycloak instance with the realm `{{ cookiecutter.ifdd_oidc_realm }}` | issuer and signing keys of the access tokens |
 | a schema instance below `{{ cookiecutter.ifdd_schema_url }}` | the JSON-LD contexts of every document written |

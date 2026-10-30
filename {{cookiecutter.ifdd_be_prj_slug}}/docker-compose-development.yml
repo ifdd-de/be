@@ -23,9 +23,9 @@ services:
       - ${IFDD_BE_PORT}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.data.rule=Host(`{{cookiecutter.ifdd_be_host}}`)"
-      - "traefik.http.services.data.loadbalancer.server.port={{cookiecutter.ifdd_be_port}}"
-      - "traefik.docker.network=proxy-net"
+      - "traefik.http.routers.{{ cookiecutter.ifdd_be_prj_slug }}.rule=Host(`{{cookiecutter.ifdd_be_host}}`)"
+      - "traefik.http.services.{{ cookiecutter.ifdd_be_prj_slug }}.loadbalancer.server.port={{cookiecutter.ifdd_be_port}}"
+      - "traefik.docker.network={{ cookiecutter.ifdd_proxy_network }}"
     depends_on:
       db:
         condition: service_healthy
@@ -54,7 +54,7 @@ services:
 
 networks:
   ext-proxy-net:
-    name: proxy-net
+    name: {{ cookiecutter.ifdd_proxy_network }}
     external: true
   db-net:
     external: false

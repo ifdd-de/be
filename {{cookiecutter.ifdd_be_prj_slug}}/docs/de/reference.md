@@ -53,7 +53,7 @@ Weitere Einstellungen von `ifdd-be-core` mit Default, in `.env` setzbar:
 | Art | Name | Hinweis |
 |---|---|---|
 | Port | `{{ cookiecutter.ifdd_be_port }}` | uvicorn in den Netzen; nicht auf dem Host veröffentlicht |
-| Netz | `proxy-net` (extern) | Traefik erreicht das Backend; das Backend erreicht Keycloak und schema |
+| Netz | `{{ cookiecutter.ifdd_proxy_network }}` (extern) | Traefik erreicht das Backend; das Backend erreicht Keycloak und schema |
 | Netz | `db-net` (intern im Compose-Projekt) | Backend und Datenbank |
 | Volume | `ifdd_be_postgres_data` | Datenbank, unter `/var/lib/postgresql` |
 | Volume | `ifdd_be_postgres_data_backups` | unter `/backups` im Datenbank-Container |

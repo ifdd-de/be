@@ -52,7 +52,7 @@ Further settings of `ifdd-be-core` with defaults, settable in `.env`:
 | Kind | Name | Note |
 |---|---|---|
 | port | `{{ cookiecutter.ifdd_be_port }}` | uvicorn inside the networks; not published on the host |
-| network | `proxy-net` (external) | Traefik reaches the backend; the backend reaches Keycloak and schema |
+| network | `{{ cookiecutter.ifdd_proxy_network }}` (external) | Traefik reaches the backend; the backend reaches Keycloak and schema |
 | network | `db-net` (internal to the compose project) | backend and database |
 | volume | `ifdd_be_postgres_data` | database, at `/var/lib/postgresql` |
 | volume | `ifdd_be_postgres_data_backups` | at `/backups` in the database container |

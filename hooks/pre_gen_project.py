@@ -11,6 +11,14 @@ if not re.match(PROJECT_SLUG_REGEX, ifdd_be_prj_slug):
     # exits with status 1 to indicate failure
     sys.exit(1)
 
+# The external network shared with the proxy; it names the network in the
+# compose files and in the Traefik label traefik.docker.network.
+NETWORK_REGEX = r'^[A-Za-z0-9][A-Za-z0-9_.-]*$'
+ifdd_proxy_network = '{{ cookiecutter.ifdd_proxy_network }}'
+if not re.match(NETWORK_REGEX, ifdd_proxy_network):
+    print('ERROR: ifdd_proxy_network %r is not a Docker network name' % ifdd_proxy_network)
+    sys.exit(1)
+
 # The browser origin of the UI, the only origin allowed by CORS. Browsers send
 # it as scheme://host[:port], without path and without the default port, and
 # the backend compares it character by character.

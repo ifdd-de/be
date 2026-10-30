@@ -2,6 +2,21 @@
 
 The version scheme follows the other IFDD repositories: `YY.MM.N`.
 
+## [Unreleased]
+
+- Traefik: the router and the service of the backend are named after the
+  project slug (`ifdd_be_prj_slug`) instead of the fixed name `data`, in both
+  compose files, so that several backends behind one proxy do not declare the
+  same router. The external proxy network comes from the new shared variable
+  `ifdd_proxy_network` (default `proxy-net`) instead of being fixed, in the
+  compose network and in `traefik.docker.network`; the pre-generation hook
+  checks the name. `tests/check_traefik.py` checks both for every fixture.
+- Upgrade: `cruft update`, then recreate the container
+  (`docker compose -f docker-compose-production.yml up -d`). Own Traefik
+  configuration that refers to `data@docker` must use `<slug>@docker`.
+  Instances with another proxy network set it with
+  `cruft update --variables-to-update '{"ifdd_proxy_network": "<name>"}'`.
+
 ## [26.10.2] - 2026-10-14
 
 - The template file of the instance `pyproject.toml` is named

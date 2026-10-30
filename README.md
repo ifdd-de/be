@@ -43,6 +43,7 @@ Beyond the usual host, port and OIDC values:
 | `ifdd_be_enable_versioning` | `y` (default): a write keeps the versions it replaces as history in system time; `n`: it deletes them. Valid-time periods are kept either way (`IFDD_VERSIONING`, see `ifdd-be-core`) |
 | `ifdd_be_postgres_image` | PostgreSQL image, default `postgres:18`; ifdd-be-core needs 13 or later (`btree_gist`, `pg_trgm`) |
 | `ifdd_be_version` | service version, used in the image tag, `/version` and the OpenAPI document |
+| `ifdd_proxy_network` | shared: external Docker network of the proxy, default `proxy-net`; the compose files join it and name it in `traefik.docker.network` |
 
 Roles are client roles of `ifdd_oidc_jwks_audience`
 (`resource_access.<audience>.roles` in the access token). Only access tokens
