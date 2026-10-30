@@ -2,7 +2,17 @@
 
 The version scheme follows the other IFDD repositories: `YY.MM.N`.
 
-## [Unreleased]
+## [26.10.3] - 2026-10-30
+
+- `ifdd_be_version` and `ifdd_be_core_version` 26.10.3: ifdd-be-core 26.10.3
+  with FastAPI 0.162.0. The instance needs that release on PyPI or its wheel
+  in `wheels/`.
+- Template test fixture `single-aspect`: PostgreSQL image `postgres:18.6`
+  (was `postgres:18.4`).
+- Documentation check: Sphinx 9.2.0 (`tests/docs/requirements.txt`).
+- Upgrade to 26.10.3: `cruft update`, rebuild the image
+  (`docker compose -f docker-compose-production.yml build`), recreate the
+  container.
 
 - Traefik: the router and the service of the backend are named after the
   project slug (`ifdd_be_prj_slug`) instead of the fixed name `data`, in both
