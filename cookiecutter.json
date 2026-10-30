@@ -1,7 +1,7 @@
 {
   "ifdd_be_prj_name": "IFDD Backend",
   "ifdd_be_prj_slug": "{{ cookiecutter.ifdd_be_prj_name|lower|replace(' ', '_') }}",
-  "ifdd_be_core_version": "26.10.2",
+  "ifdd_be_core_version": "26.10.3",
   "ifdd_be_enable_postgres": "y",
   "ifdd_be_enable_rest_server": "y",
   "ifdd_be_max_workers": "4",
@@ -13,7 +13,7 @@
   "ifdd_be_enable_versioning": "y",
   "ifdd_be_host": "data",
   "ifdd_be_port": "8881",
-  "ifdd_be_version": "26.10.2",
+  "ifdd_be_version": "26.10.3",
   "ifdd_be_aspects": "{\"products\": \"product\", \"functions\": \"function\", \"locations\": \"location\", \"organisations\": \"organisation\"}",
   "ifdd_be_role_nodes_read": "ifdd_nodes_ro",
   "ifdd_be_role_nodes_write": "ifdd_nodes_rw",
