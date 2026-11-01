@@ -1,7 +1,7 @@
 # Backend image. Plain python:3.14-slim (Debian/glibc); the former
 # tiangolo/uvicorn-gunicorn base image is no longer used. uvicorn is started
 # directly (no gunicorn), see start.sh.
-FROM python:3.14-slim
+FROM python:3.15-slim
 
 ENV PIP_ROOT_USER_ACTION=ignore \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
