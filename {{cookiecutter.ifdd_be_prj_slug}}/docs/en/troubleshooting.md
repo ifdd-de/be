@@ -10,6 +10,7 @@ Known failure patterns, from setups of IFDD nodes. Start with `/whoami` for
 |---|---|---|
 | 401 `Token validation failed: Unable to verify token signature ... CERTIFICATE_VERIFY_FAILED` | the image does not trust the proxy's certificate | copy `ca.crt` of the proxy into `certs/`, rebuild the image |
 | 401 `Unable to verify token signature`, Keycloak not reachable | inside the container the realm host resolves to the container itself | add the host to `ifdd_proxy_internal_hosts` of the proxy instance (network alias of Traefik) |
+| 401 `Unable to verify token signature`, the keys URL answers 404 | the realm runs on another server, but its host is a network alias of this server's proxy | remove it from `ifdd_proxy_internal_hosts` of this server's proxy ({ref}`ifdd-be-setup-several-servers`) |
 | 401 `Invalid payload padding` with a token copied from the browser | the browser's developer tools shorten long header values in the display | copy the request "as cURL", or take the token from `localStorage` (`oidc.user:<authority>:<client>`) |
 | 401 `Invalid token: not an access token` | an ID token was sent | send the access token |
 | 401 `Invalid token audience` | the token was issued for another client | the client needs the scope that adds the audience `{{ cookiecutter.ifdd_oidc_jwks_audience }}` |

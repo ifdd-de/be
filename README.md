@@ -97,7 +97,7 @@ with `-W` (configuration `tests/docs/conf.py`, versions
 
 | Workflow | Trigger | Does |
 |---|---|---|
-| `template-test.yml` | push, PR | renders the template against three fixture configurations, checks CORS (`tests/check_cors.py`), the context root (`tests/check_context_root.py`), the database service and start order (`tests/check_db_service.py`), the image setup (`tests/check_image.py`), that a shell can source the rendered `.env` and that the hook rejects a single quote in `ifdd_be_aspects`, installs the result and runs its tests, and checks and builds its documentation (`tests/check_docs.py`) |
+| `template-test.yml` | push, PR | renders the template against three fixture configurations, checks CORS (`tests/check_cors.py`), the context root (`tests/check_context_root.py`), the database service and start order (`tests/check_db_service.py`), the image setup (`tests/check_image.py`), that two instances with different project names share no Traefik or image name (`tests/check_two_instances.py`, with a counter-check), that a shell can source the rendered `.env` and that the hook rejects a single quote in `ifdd_be_aspects`, installs the result and runs its tests, and checks and builds its documentation (`tests/check_docs.py`) |
 | `template-update-test.yml` | push, PR | generates an instance from the latest tag, applies the current template with `cruft update` and fails on reject files |
 
 A template can be syntactically fine and still fail to render, so the render

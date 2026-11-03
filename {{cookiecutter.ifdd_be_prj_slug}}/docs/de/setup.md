@@ -78,6 +78,28 @@ compose und das Backend lesen den Wert ohne sie. Instanzen, die vor dieser
 ergänzen, wenn `.env` in einer Shell geladen wird. Ein einfaches
 Anführungszeichen innerhalb dieser Werte ist nicht möglich.
 
+(ifdd-be-setup-several-servers)=
+### Mehrere Server
+
+Der Realm und die Inhaltsdienste (schema, type, unit) können auf einem
+anderen Server laufen als dieses Backend:
+
+- `IFDD_OIDC_*` und `IFDD_SCHEMA_URL` sind die öffentlichen URLs auf diesem
+  Server. Das Backend nimmt nur Contexts unterhalb seiner `IFDD_SCHEMA_URL`
+  an; teilen sich die Stages einen schema-Dienst, haben alle denselben Wert.
+- Das Backend ruft diese Hosts selbst auf. Ihre Namen dürfen keine
+  Netz-Aliase des Proxys dieses Servers sein (der Proxy hat keinen Router für
+  sie); sie lösen über DNS auf. Das Prüfskript der Proxy-Instanz zeigt das.
+- Das Image muss der CA vertrauen, die ihre Zertifikate ausgestellt hat: sie
+  vor dem Bauen nach `certs/` legen (bei einer Zwischen-CA ein Bündel aus Root
+  und Zwischen-CA, oder beide Dateien), dann das Image neu bauen. Ohne sie
+  scheitern Tokenprüfungen mit `CERTIFICATE_VERIFY_FAILED` und Contexts mit
+  502.
+
+Zwei Backends auf einem Server (etwa zwei Stages auf einer virtuellen
+Maschine) brauchen verschiedene `ifdd_be_prj_name`: Verzeichnis,
+Traefik-Namen und Image-Name folgen ihm.
+
 ## Skip-Liste
 
 Pfade, die zur Instanz gehören und die `cruft update` nicht anfassen darf:

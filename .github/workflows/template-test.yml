@@ -85,6 +85,21 @@ jobs:
       - name: Traefik names follow the slug, the proxy network is the configured one
         run: python template/tests/check_traefik.py template/tests/fixtures/${{ matrix.fixture }}.yaml "$INSTANCE"
 
+      - name: Two instances with different project names share no Traefik or image name
+        run: |
+          for stage in a b; do
+            cookiecutter --no-input --config-file template/tests/fixtures/${{ matrix.fixture }}.yaml \
+              --output-dir "two-$stage" template "ifdd_be_prj_name=Example Stage $stage"
+          done
+          python template/tests/check_two_instances.py two-a/* two-b/*
+          # Counter-check: the same project name twice must be reported.
+          cookiecutter --no-input --config-file template/tests/fixtures/${{ matrix.fixture }}.yaml \
+            --output-dir two-same template "ifdd_be_prj_name=Example Stage a"
+          if python template/tests/check_two_instances.py two-a/* two-same/*; then
+            echo "The same project name twice was not reported" >&2
+            exit 1
+          fi
+
       - name: Image setup (base image, uvicorn start, no gunicorn)
         run: python template/tests/check_image.py "$INSTANCE"
 

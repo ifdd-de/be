@@ -75,6 +75,27 @@ backend read the value without them. Instances generated before this change
 have the values without quotes: add them by hand if you load `.env` in a
 shell. A single quote inside these values is not possible.
 
+(ifdd-be-setup-several-servers)=
+### Several servers
+
+The realm and the content services (schema, type, unit) may run on another
+server than this backend:
+
+- `IFDD_OIDC_*` and `IFDD_SCHEMA_URL` are the public URLs on that server.
+  The backend only accepts contexts below its `IFDD_SCHEMA_URL`; when the
+  stages share one schema service, all of them have the same value.
+- The backend calls these hosts itself. Their names must not be network
+  aliases of this server's proxy (the proxy has no router for them); they
+  resolve through DNS. The check script of the proxy instance shows it.
+- The image must trust the CA that signed their certificates: put it into
+  `certs/` before the build (for an intermediate CA a bundle of root and
+  intermediate, or both files), then rebuild the image. Without it, token
+  checks fail with `CERTIFICATE_VERIFY_FAILED` and contexts with 502.
+
+Two backends on one server (for example two stages on one virtual machine)
+need different `ifdd_be_prj_name`: the directory, the Traefik names and the
+image name follow it.
+
 ## Skip list
 
 Paths that belong to the instance and that `cruft update` must not touch:
