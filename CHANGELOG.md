@@ -2,6 +2,17 @@
 
 The version scheme follows the other IFDD repositories: `YY.MM.N`.
 
+## [Unreleased]
+
+- Setup page: section on several servers: realm and content services on
+  another server (URLs, no network alias on this server's proxy, CA in
+  `certs/` before the build); troubleshooting: 404 on the keys URL.
+- Two instances on one server: they need different `ifdd_be_prj_name`; the
+  directory, the Traefik names and the image name follow it. The template
+  CI renders two instances and checks that they share no Traefik or image
+  name (`tests/check_two_instances.py`), with a counter-check for the same
+  name twice.
+
 ## [26.10.3] - 2026-10-30
 
 - `ifdd_be_version` and `ifdd_be_core_version` 26.10.3: ifdd-be-core 26.10.3

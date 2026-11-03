@@ -10,6 +10,7 @@ Bekannte Fehlerbilder aus dem Aufbau von IFDD-Knoten. Bei 401 und 403 mit
 |---|---|---|
 | 401 `Token validation failed: Unable to verify token signature ... CERTIFICATE_VERIFY_FAILED` | das Image vertraut dem Zertifikat des Proxys nicht | `ca.crt` des Proxys nach `certs/` kopieren, Image neu bauen |
 | 401 `Unable to verify token signature`, Keycloak nicht erreichbar | im Container löst der Realm-Host auf den Container selbst auf | den Host in `ifdd_proxy_internal_hosts` der Proxy-Instanz aufnehmen (Netz-Alias von Traefik) |
+| 401 `Unable to verify token signature`, die Schlüssel-URL antwortet 404 | der Realm läuft auf einem anderen Server, sein Host ist aber ein Netz-Alias des Proxys dieses Servers | ihn aus `ifdd_proxy_internal_hosts` des Proxys dieses Servers entfernen ({ref}`ifdd-be-setup-several-servers`) |
 | 401 `Invalid payload padding` mit einem aus dem Browser kopierten Token | die Entwicklerwerkzeuge kürzen lange Header-Werte in der Anzeige | die Anfrage „als cURL“ kopieren oder das Token aus `localStorage` nehmen (`oidc.user:<authority>:<client>`) |
 | 401 `Invalid token: not an access token` | ein ID-Token wurde geschickt | das Access-Token schicken |
 | 401 `Invalid token audience` | das Token wurde für einen anderen Client ausgestellt | der Client braucht den Scope, der die Audience `{{ cookiecutter.ifdd_oidc_jwks_audience }}` hinzufügt |
