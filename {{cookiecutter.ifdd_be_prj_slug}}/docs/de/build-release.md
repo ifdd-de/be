@@ -48,7 +48,7 @@ Beschreibung; zwei Builds derselben Version unterscheidet sie nicht.
 | Version der Instanz | `{{ cookiecutter.ifdd_be_version }}` | Template-Variable `ifdd_be_version`; Image-Tag, `/version`, OpenAPI-Dokument |
 | be-core-Abhängigkeit | `~={{ cookiecutter.ifdd_be_core_version }}` | Template-Variable `ifdd_be_core_version`, in `pyproject.toml` |
 
-Das Schema ist `JJ.MM.N` (26.10.1 ist die erste Version im Oktober 2026).
+Das Schema ist `JJ.MM.N` (26.11.1 ist die erste Version im November 2026).
 Beide Werte kommen aus dem Template, nicht aus `.cookiecutter_all.yaml`;
 eine neue Template-Version bringt sie mit `cruft update` mit.
 

@@ -75,7 +75,8 @@ an entry point that links to them.
 
 The pages have no `conf.py` of their own: they are meant to be copied into a
 Sphinx project that documents all services. That project needs `myst_parser`
-and `sphinxcontrib.mermaid`. Labels start with `ifdd-be-`; references to
+and `sphinxcontrib.plantuml` (PlantUML with Java and Graphviz).
+Labels start with `ifdd-be-`; references to
 `ifdd-instances-be` (the instance chapter of the meta repository) and
 `ifdd-be-core-*` (the API reference of `ifdd-be-core`) resolve only there.
 
@@ -92,6 +93,14 @@ headings per level in both languages, every label with the prefix, every
 reference to an own label resolvable, and a Sphinx build of each language
 with `-W` (configuration `tests/docs/conf.py`, versions
 `tests/docs/requirements.txt`).
+
+The check runs PlantUML, so it needs Java and Graphviz.
+`tests/docs/get_plantuml.sh` downloads the pinned PlantUML jar into the user
+cache, checks its SHA-256 and prints its path:
+
+```bash
+export IFDD_PLANTUML_JAR="$(tests/docs/get_plantuml.sh)"
+```
 
 ## CI
 
@@ -112,89 +121,8 @@ Generated instances carry two workflows of their own: `ci.yml` (tests plus
 `cruft check` and `cruft diff` as drift indicators) and `release.yml` (image
 build and push to ghcr.io on a `v*` tag).
 
-## Honesty notes
+## AI assistance
 
-See the instance README for CORS, the CA certificates and the calls through
-the proxy. `tests/check_cors.py` fails against the template before
-`ifdd_ui_url` was introduced (checked).
-
-Database service (2026-10-05): `tests/check_db_service.py` fails against the
-previous template (healthcheck without `-d`, `:Z`/`:z` on named volumes) and
-passes now; `docker compose config` (Compose v5.5.1) accepts both compose
-files and renders the check as `pg_isready -U <user> -d <database>`. Not
-observed: the healthcheck running in Docker (no Docker available) and the
-Compose warning disappearing; `docker compose config` does not print that
-warning, it appeared at `up` in the reported run. The reported symptom was a
-`FATAL: database "<user>" does not exist` every 10 seconds.
-
-Start order (2026-10-05): `tests/check_db_service.py` also checks that the
-backend waits for a healthy database and that both images copy
-`prestart.sh`; it fails against the previous template.
-
-Base image (2026-10-05): the backend uses `python:3.14-slim` and starts
-uvicorn directly (no gunicorn). `tests/check_image.py` fails against the
-previous template (tiangolo base image, gunicorn).
-
-PostgreSQL 18 and versioning (2026-10-06): the database image comes from
-`ifdd_be_postgres_image` (default `postgres:18`, was a fixed `postgres:17`)
-and the volume is mounted at `/var/lib/postgresql`, as the 18 image expects
-and as the keycloak and wf templates do; `ifdd_be_enable_versioning` sets
-`IFDD_VERSIONING`. `tests/check_db_service.py` fails against the previous
-template (fixed image, mount at `.../data`, no `IFDD_VERSIONING`); rendered
-with cookiecutter 2.7.1 and checked with `docker compose config` (v5.5.1).
-`ifdd-be-core` with the bitemporal storage (be-core-3/-4) was tested against
-PostgreSQL 18.4. Not checked: the `postgres:18` image itself and what it does
-when it finds data of version 17 in the volume.
-
-Documentation `docs/` (2026-10-13): rendered with cookiecutter 2.7.1 for all
-three fixtures; `tests/check_docs.py` passes for each (Sphinx 9.1.0,
-myst-parser 5.1.0, sphinxcontrib-mermaid 2.1.1, Python 3.13), and the
-placeholder check finds nothing. Counter-checks on a rendered copy: a heading
-of another level in one language, a reference to an unknown own label, a
-label without prefix, an unknown directive in one language and a page in one
-language only each make it fail. The workflow file passes actionlint 1.7.12;
-the workflow itself has not run. Content: taken from the previous instance
-README, the template README, `ifdd-be-core` and the handover notes; what has
-not been tested is marked as such in the pages (backup and restore, image
-build, resource values). Also checked (2026-10-13): one Sphinx project per language with the pages
-of all ten service templates (rendered with `cookiecutter_all.yaml`), the
-instance chapter of the meta repository and ifdd-be-core with its OpenAPI
-document builds with `-W` and no suppressed warnings, so every cross
-reference resolves; the Mermaid diagrams render in headless Chromium
-141.0.7390.37 (Playwright 1.56.0, Mermaid 11.12.1 served locally).
-
-API documentation (2026-10-13): the instance README has a new section, the
-production compose file a corrected comment on `csp-api-docs`, and the smoke
-test of new instances checks the documentation pages. Rendered with
-cookiecutter 2.7.1 (all three fixtures); the rendered instance installed with
-the changed `ifdd-be-core`: the new smoke test passes and fails with the
-previous `ifdd-be-core`; the known route test still fails as before.
-
-Context access (2026-10-12): `ifdd_context_root` renders to
-`IFDD_CONTEXT_ROOT`; `tests/check_context_root.py` checks it for all three
-fixtures (rendered with cookiecutter 2.7.1) and fails against the previous
-template. The rendered instance was installed with the changed `ifdd-be-core`
-(be-core-5): its smoke test passes, the known route test
-(`test_configured_aspect_routes_exist`) still fails as before. Existing
-instances: add `IFDD_CONTEXT_ROOT` to `.env` by hand (`.env` is on the skip
-list), drop the `nodes` table and load the data again (new column `domain`).
-Not checked: the image build.
-
-`.env` loadable by a shell (2026-10-13): rendered with cookiecutter 2.7.1
-(all three fixtures and the `cookiecutter_all.yaml` of the meta repository).
-`set -a; . ./.env; set +a` in bash 5.2.21 runs without an error and leaves
-valid JSON in `IFDD_ASPECTS`; before, it failed at `API_TITLE` (a title
-with spaces) and at the JSON. `CoreSettings` of ifdd-be-core
-(pydantic-settings 2.15.0) and `docker compose config` (v5.5.1, `env_file`)
-read both values without the quotes. The hook rejects a single quote in
-`ifdd_be_aspects`; both checks fail against the previous template. The
-instance tests are unchanged (the known route test still fails). The
-workflow passes actionlint 1.7.12; it has not run.
-
-Route test and Python 3.13 (2026-10-13): `test_configured_aspect_routes_exist`
-takes the paths from `app.openapi()`. With FastAPI 0.142.4 and the changed
-ifdd-be-core, on Python 3.13.16 and 3.14.6, the instance tests pass (3 of 3)
-for all three fixtures; the old line fails with the same FastAPI, and the new
-test fails when a configured segment has no route. `requires-python >=3.13`:
-installing the rendered instance on Python 3.13.16 works. Not checked: the
-instance CI itself, which also needs ifdd-be-core from PyPI or `wheels/`.
+Some parts of this repository, in particular the tests, the test data and the
+documentation, were developed or improved with the help of large language
+models (LLMs). All changes were reviewed and released by the maintainer.

@@ -27,18 +27,29 @@ für eigene Einstellungen und `app/routers/` für eigene Endpunkte.
 
 ## Architektur
 
-```{mermaid}
-flowchart LR
-  Browser -->|HTTPS| Proxy[proxy: Traefik]
-  UI[ui] -->|liest| Proxy
-  CT[ct] -->|schreibt| Proxy
-  TS[ts: Grafana] -->|liest| Proxy
-  Proxy -->|"{{ cookiecutter.ifdd_be_host }}"| BE[be: uvicorn]
-  BE -->|SQL| DB[(PostgreSQL)]
-  BE -->|Signaturschlüssel JWKS| Proxy
-  BE -->|JSON-LD-Contexts| Proxy
-  Proxy --> KC[Keycloak]
-  Proxy --> Schema[schema]
+```{uml}
+@startuml
+left to right direction
+  rectangle "Browser" as Browser
+  rectangle "proxy: Traefik" as Proxy
+  Browser --> Proxy : HTTPS
+  rectangle "ui" as UI
+  UI --> Proxy : liest
+  rectangle "ct" as CT
+  CT --> Proxy : schreibt
+  rectangle "ts: Grafana" as TS
+  TS --> Proxy : liest
+  rectangle "be: uvicorn" as BE
+  Proxy --> BE : {{ cookiecutter.ifdd_be_host }}
+  database "PostgreSQL" as DB
+  BE --> DB : SQL
+  BE --> Proxy : Signaturschlüssel JWKS
+  BE --> Proxy : JSON-LD-Contexts
+  rectangle "Keycloak" as KC
+  Proxy --> KC
+  rectangle "schema" as Schema
+  Proxy --> Schema
+@enduml
 ```
 
 Das Backend ruft selbst zwei Dienste auf, beide unter ihren öffentlichen URLs
