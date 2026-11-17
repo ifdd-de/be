@@ -48,7 +48,7 @@ does not tell two builds of the same version apart.
 | version of the instance | `{{ cookiecutter.ifdd_be_version }}` | template variable `ifdd_be_version`; image tag, `/version`, OpenAPI document |
 | be-core dependency | `~={{ cookiecutter.ifdd_be_core_version }}` | template variable `ifdd_be_core_version`, in `pyproject.toml` |
 
-The scheme is `YY.MM.N` (26.10.1 is the first version in October 2026). Both
+The scheme is `YY.MM.N` (26.11.1 is the first version in November 2026). Both
 values come from the template, not from `.cookiecutter_all.yaml`, so a new
 template version brings them with `cruft update`.
 
