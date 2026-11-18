@@ -34,8 +34,8 @@ jobs:
       - name: Install tooling
         run: pip install cruft cookiecutter pyyaml
 
-      # be-core is not on PyPI in CI, so it is installed from its repository.
-      # Pin this to a release once the package is published.
+      # be-core is installed from its main branch, so the template is tested
+      # against the current runtime, which may be ahead of the PyPI release.
       - name: Check out be-core
         uses: actions/checkout@v7
         with:

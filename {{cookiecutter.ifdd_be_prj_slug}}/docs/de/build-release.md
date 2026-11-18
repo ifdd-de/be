@@ -29,8 +29,8 @@ Nach jeder Änderung an `wheels/`, `certs/` oder `app/` neu bauen: Das Image
 
 ## Das be-core-Wheel
 
-Solange `ifdd-be-core` nicht auf PyPI veröffentlicht ist, installiert das
-Image es aus `wheels/`:
+Das Image installiert `ifdd-be-core` von PyPI. Für einen unveröffentlichten
+Build das Wheel nach `wheels/` legen; das Image zieht es dem Index vor:
 
 1. das Wheel aus dem aktuellen Quelltext von be-core bauen (dort
    `python -m build` oder `uv build`);
