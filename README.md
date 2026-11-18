@@ -113,9 +113,9 @@ A template can be syntactically fine and still fail to render, so the render
 step is the one that matters. The update test covers the failure mode a plain
 render cannot see: a change that renders cleanly but breaks existing instances.
 
-`template-test.yml` checks out `ifdd-de/be-core` to install the runtime. While
-that repository is private the job needs a token with read access; once
-`ifdd-be-core` is on PyPI the checkout step can be dropped.
+`template-test.yml` checks out `ifdd-de/be-core` (branch `main`) to install
+the runtime, so the template is tested against the current runtime, which may
+be ahead of the release on PyPI.
 
 Generated instances carry two workflows of their own: `ci.yml` (tests plus
 `cruft check` and `cruft diff` as drift indicators) and `release.yml` (image

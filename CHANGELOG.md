@@ -2,6 +2,15 @@
 
 The version scheme follows the other IFDD repositories: `YY.MM.N`.
 
+## [26.11.2] - 2026-11-18
+
+- Instance version 26.11.2; the instance still requires `ifdd-be-core`
+  26.11.1 (`ifdd_be_core_version`), which has no changes.
+- Documentation: `ifdd-be-core` is on PyPI; `wheels/` is needed only for an
+  unreleased build. The template README and CI say why the template CI still
+  installs be-core from its `main` branch.
+- License line with the e-mail address of the holder.
+
 ## [26.11.1] - 2026-11-14
 
 - Setup page: section on several servers: realm and content services on

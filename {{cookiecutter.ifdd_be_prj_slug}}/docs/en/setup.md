@@ -10,7 +10,7 @@
 | the proxy lists `{{ cookiecutter.ifdd_be_host }}`, the Keycloak host and the schema host in `ifdd_proxy_internal_hosts` | inside the containers these names must lead to Traefik, not to the container itself |
 | a Keycloak instance with the realm `{{ cookiecutter.ifdd_oidc_realm }}` | issuer and signing keys of the access tokens |
 | a schema instance below `{{ cookiecutter.ifdd_schema_url }}` | the JSON-LD contexts of every document written |
-| the be-core wheel in `wheels/` while `ifdd-be-core` is not on PyPI | the image installs it from there |
+| `ifdd-be-core` on PyPI, or the wheel of an unreleased build in `wheels/` | the image installs the runtime, a wheel in `wheels/` first |
 | the CA certificate of the proxy (`certs/ca.crt` there) in `certs/` | the image must trust the proxy's certificate |
 
 ## Check the calls through the proxy
@@ -39,12 +39,13 @@ By hand, from the directory that holds the instances:
 cruft create --no-input --config-file .cookiecutter_all.yaml \
   --skip envs --skip .env \
   https://github.com/ifdd-de/be
-cp <be-core>/dist/ifdd_be_core-*.whl {{ cookiecutter.ifdd_be_prj_slug }}/wheels/
+# only for an unreleased build of be-core:
+# cp <be-core>/dist/ifdd_be_core-*.whl {{ cookiecutter.ifdd_be_prj_slug }}/wheels/
 cp proxy/certs/ca.crt {{ cookiecutter.ifdd_be_prj_slug }}/certs/
 ```
 
-Build the wheel from the current source of be-core and remove older wheels of
-the same version first: pip takes any wheel with a matching version, and an
+For an unreleased build, build the wheel from the current source of be-core
+and remove older wheels of the same version first: pip takes any wheel with a matching version, and an
 image with an old build under the same version number has happened more than
 once (see {ref}`ifdd-be-troubleshooting`).
 

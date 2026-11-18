@@ -8,7 +8,7 @@ points `app/settings.py` and `app/routers/`.
 ## Quick start
 
 ```bash
-cp <be-core>/dist/ifdd_be_core-*.whl wheels/   # while ifdd-be-core is not on PyPI
+cp <be-core>/dist/ifdd_be_core-*.whl wheels/   # optional: an unreleased build of be-core
 cp <proxy instance>/certs/ca.crt certs/         # trust the proxy's certificate
 docker compose -f docker-compose-production.yml up -d --build
 curl --cacert certs/ca.crt {{cookiecutter.ifdd_be_url}}/version

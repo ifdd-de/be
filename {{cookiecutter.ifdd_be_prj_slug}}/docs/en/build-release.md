@@ -29,8 +29,8 @@ them over at build time.
 
 ## The be-core wheel
 
-While `ifdd-be-core` is not published on PyPI, the image installs it from
-`wheels/`:
+The image installs `ifdd-be-core` from PyPI. For an unreleased build, put its
+wheel into `wheels/`; the image prefers it to the index:
 
 1. build the wheel from the current source of be-core (`python -m build` or
    `uv build` there);
