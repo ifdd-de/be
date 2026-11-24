@@ -1,4 +1,4 @@
-# Backend image. Plain python:3.14-slim (Debian/glibc); the former
+# Backend image. Plain python:3.15-slim (Debian/glibc); the former
 # tiangolo/uvicorn-gunicorn base image is no longer used. uvicorn is started
 # directly (no gunicorn), see start.sh.
 FROM python:3.15-slim
