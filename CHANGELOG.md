@@ -2,8 +2,11 @@
 
 The version scheme follows the other IFDD repositories: `YY.MM.N`.
 
-## [Unreleased]
+## [26.11.11] - 2026-11-24
 
+- Version aligned across all ifdd-de repositories: `ifdd_be_version` and
+  `ifdd_be_core_version` 26.11.11 (ifdd-be-core 26.11.11 has no code changes).
+- Dockerfile comment names `python:3.15-slim`, the image it already uses.
 - CI: GitHub Actions pinned to commit SHAs (version as comment),
   `persist-credentials: false` on every checkout; the same in the workflows of
   the instance.
